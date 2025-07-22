@@ -1,0 +1,18 @@
+Дефекты в классе StringUtils:
+
+1. Метод trim():
+   - Ошибка в коде: опечатка в переменной 'whitespace' (написано 'whitespace' в условии, но 'whitespace' в коде)
+   - Не обрабатывает табуляции и другие whitespace-символы
+
+2. Метод contains():
+   - Неоптимальная реализация через try/except
+   - Лучше использовать оператор 'in'
+
+3. Метод delete_symbol():
+   - Избыточная проверка через contains()
+   - replace() и так ничего не делает если символ не найден
+
+Рекомендации:
+1. Исправить опечатку в методе trim()
+2. Упростить метод contains() до: return symbol in string
+3. Упростить delete_symbol() до: return string.replace(symbol, "")
