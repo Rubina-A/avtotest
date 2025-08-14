@@ -1,4 +1,5 @@
 import pytest
+import allure
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -8,12 +9,18 @@ from saucedemo_pages import LoginPage, InventoryPage, CartPage, CheckoutPage
 @pytest.fixture
 def driver():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    driver.maximize_window()
     yield driver
     driver.quit()
 
 
+@allure.title("Оформление заказа на Saucedemo")
+@allure.description("Проверка добавления товаров в корзину и оформления заказа.")
+@allure.feature("Интернет-магазин Saucedemo")
+@allure.severity(allure.severity_level.CRITICAL)
 def test_saucedemo_checkout(driver):
     driver.get("https://www.saucedemo.com/")
+
     login_page = LoginPage(driver)
     login_page.enter_username("standard_user")
     login_page.enter_password("secret_sauce")

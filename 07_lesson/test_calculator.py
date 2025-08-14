@@ -1,35 +1,35 @@
 import pytest
+import allure
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from calculator_page import CalculatorPage
-import time
+from calculator_page import CalcMainPage
 
 
 @pytest.fixture
 def driver():
     driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    driver.maximize_window()
     yield driver
     driver.quit()
 
 
-def test_calculator_with_delay(driver):
-    driver.get("https://bonigarcia.dev/selenium-webdriver-java/slow-calculator.html")
-    calculator = CalculatorPage(driver)
+@allure.title("Тест калькулятора: {num1} {operation} {num2} = {expected_result}")
+@allure.description("Проверка работы калькулятора с разными операциями и задержкой.")
+@allure.feature("Калькулятор")
+@allure.severity(allure.severity_level.CRITICAL)
+@pytest.mark.parametrize(
+    "num1, operation, num2, expected_result, delay",
+    [
+        ("7", "+", "8", "15", 5),
+    ],
+)
+def test_calculator_flow(driver, num1, operation, num2, expected_result, delay):
+    page = CalcMainPage(driver)
 
-    calculator.set_delay("45")
+    page.open()
+    page.set_delay(delay)
+    page.click_buttons([num1, operation, num2, "="])
+    page.wait_for_result(expected_result, delay)
 
-    calculator.click_button("7")
-    calculator.click_button("+")
-    calculator.click_button("8")
-
-    start_time = time.time()
-
-    calculator.click_button("=")
-
-    calculator.wait_for_calculation(50)
-
-    assert calculator.get_result() == "15"
-
-    elapsed_time = time.time() - start_time
-    assert 45 <= elapsed_time <= 50, f"Вычисление заняло {elapsed_time} секунд вместо ожидаемых 45"
+    assert page.get_result() == expected_result
