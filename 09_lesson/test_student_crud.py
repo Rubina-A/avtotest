@@ -1,9 +1,17 @@
 import pytest
 from sqlalchemy import create_engine, text
+from sqlalchemy.engine import URL
 
-# Подключение к БД
-db_connection_string = "postgresql://postgres:7548@localhost:5432/student"
-db = create_engine(db_connection_string)
+db_url = URL.create(
+    drivername="postgresql+psycopg",
+    username="postgres",
+    password="7548",
+    host="localhost",
+    port=5432,
+    database="student",
+)
+db = create_engine(db_url, future=True)
+
 
 def test_add_student():
     sql = text("""
